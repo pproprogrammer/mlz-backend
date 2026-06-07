@@ -1,14 +1,29 @@
 require('dotenv').config();
+// const express = require('express');
+// const mysql = require('mysql2/promise');
+// const cors = require('cors');
+// const bodyParser = require('body-parser');
+
+// const app = express();
+// app.use(cors());
+// app.use(express.json()); // <--- CRITICAL: Enables express to parse JSON payloads
+// app.use(bodyParser.json());
+
 const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-app.use(cors());
-app.use(express.json()); // <--- CRITICAL: Enables express to parse JSON payloads
-app.use(bodyParser.json());
 
+// --- CRITICAL CONFIGURATION ORDER: MUST BE BEFORE APP.POST ---
+app.use(cors()); // Allows incoming cross-origin requests from external domains
+
+// Add both parsers to support both standard JSON types and plain text fallbacks
+app.use(express.json()); 
+app.use(express.text()); 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 // Establish connection credentials pool using environment variables
 const pool = mysql.createPool({
     host: process.env.DB_HOST || 'mysql.railway.internal',
@@ -29,8 +44,22 @@ const pool = mysql.createPool({
 //     connectionLimit: 10
 // });
 
+// app.post('/api', async (req, res) => {
+//     console.log("Incoming Request Body:", req.body); // <-- Add this temporary line
+
+// NOW you can safely declare your post route
 app.post('/api', async (req, res) => {
-    console.log("Incoming Request Body:", req.body); // <-- Add this temporary line
+    console.log("Incoming Request Body:", req.body);
+    
+    // Safety check: If the browser sent it as text instead of JSON, parse it manually
+    let body = req.body;
+    if (typeof body === 'string') {
+        try {
+            body = JSON.parse(body);
+        } catch(e) {
+            console.error("Failed to parse text payload as JSON:", e);
+        }
+    }
     const { action, payload } = req.body;
     try {
         switch (action) {
