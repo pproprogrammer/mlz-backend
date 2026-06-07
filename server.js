@@ -9,24 +9,24 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Establish connection credentials pool using environment variables
-// const pool = mysql.createPool({
-//     host: process.env.DB_HOST,
-//     user: process.env.DB_USER,
-//     password: process.env.DB_PASSWORD,
-//     database: process.env.DB_DATABASE,
-//     port: process.env.DB_PORT || 3306,
-//     waitForConnections: true,
-//     connectionLimit: 5
-// });
-
 const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'mlzerpsystem_percentill',
-    password: process.env.DB_PASSWORD || 'eba8c8a56ba7248c45d8c37e8422a8a73b4523d2',
-    database: process.env.DB_DATABASE || 'mlzerpsystem_percentill',
+    host: process.env.DB_HOST || 'mysql.railway.internal',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'nFGeecYKbSaHozMWTnIMDVfJsQuFOGfG',
+    database: process.env.DB_DATABASE || 'railway',
+    port: process.env.DB_PORT || 3306,
     waitForConnections: true,
     connectionLimit: 10
 });
+
+// const pool = mysql.createPool({
+//     host: process.env.DB_HOST || 'localhost',
+//     user: process.env.DB_USER || 'mlzerpsystem_percentill',
+//     password: process.env.DB_PASSWORD || 'eba8c8a56ba7248c45d8c37e8422a8a73b4523d2',
+//     database: process.env.DB_DATABASE || 'mlzerpsystem_percentill',
+//     waitForConnections: true,
+//     connectionLimit: 10
+// });
 
 app.post('/api', async (req, res) => {
     const { action, payload } = req.body;
