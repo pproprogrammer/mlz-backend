@@ -5,7 +5,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-app.use(cors()); 
+app.use(cors());
+app.use(express.json()); // <--- CRITICAL: Enables express to parse JSON payloads
 app.use(bodyParser.json());
 
 // Establish connection credentials pool using environment variables
@@ -29,6 +30,7 @@ const pool = mysql.createPool({
 // });
 
 app.post('/api', async (req, res) => {
+    console.log("Incoming Request Body:", req.body); // <-- Add this temporary line
     const { action, payload } = req.body;
     try {
         switch (action) {
